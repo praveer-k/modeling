@@ -13,13 +13,6 @@ def main():
     print(z)
     print(torch.allclose(y, z, atol=1e-6))
 
-# find if number is even
-def even_or_odd(number: int):
-    if number % 2 == 0:
-        return True
-    else:
-        return False
-
 
 if __name__ == "__main__":
     main()

@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "python-dotenv>=1.0.1",
     "torch>=2.6.0",
     "torchaudio>=2.6.0",
     "torchvision>=0.21.0",
@@ -12,6 +13,7 @@ dependencies = [
 
 [project.scripts]
 main = "src.main:main"
+docs = "src.docs.__main__:main"
 train = "src.trainers.mnist.mnist:run_train"
 test = "src.trainers.mnist.mnist:run_test"
 
@@ -25,3 +27,13 @@ packages = ["src"]
 [tool.hatch.version]
 path = "pkg/__init__.py"
 pattern = "BUILD = 'b(?P<version>[^']+)'"
+
+[dependency-groups]
+docs = [
+    "furo>=2024.8.6",
+    "recommonmark>=0.7.1",
+    "sphinx>=8.2.1",
+    "sphinx-rtd-theme>=3.0.2",
+    "sphinxcontrib-plantuml>=0.30",
+    "watchdog>=6.0.0",
+]
