@@ -7,5 +7,5 @@ Quick overview:
    :maxdepth: 3
 
    pages/directory_structure
-   pages/architecture
+   pages/convolution
 
