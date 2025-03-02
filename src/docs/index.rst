@@ -6,6 +6,8 @@ Quick overview:
 .. toctree::
    :maxdepth: 3
 
-   pages/directory_structure
+   pages/matrix_operations
+   pages/linear_algebra
+   pages/probability
    pages/convolution
 

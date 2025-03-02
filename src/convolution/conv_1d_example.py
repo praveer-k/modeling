@@ -2,7 +2,7 @@ import torch
 from torch.nn import Conv1d
 
 def conv_1d_example():
-    device = torch.device('mps')
+    device = torch.device('mps') # cpu or cuda
     x = torch.arange(1, 7, 1, dtype=torch.float32).reshape(1, 1, -1).to(device)
     print(f"Input shape: {x.shape}")
     print(f"Input: {x.squeeze()}")
