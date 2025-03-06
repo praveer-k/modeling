@@ -37,6 +37,11 @@ class DocSettings:
     PLANTUML_JAR: str
 
 @dataclass
+class KaggleSettings:
+    USERNAME: str
+    KEY: str
+
+@dataclass
 class Settings:
     def __post_init__(self):
         load_dotenv()
@@ -48,6 +53,10 @@ class Settings:
             BUILD_DIR=os.getenv("DOCS__BUILD_DIR"),
             CACHE_DIR=os.getenv("DOCS__CACHE_DIR"),
             PLANTUML_JAR=os.getenv("DOCS__PLANTUML_JAR"),
+        )
+        self.KAGGLE = KaggleSettings(
+            USERNAME=os.getenv("KAGGLE__USERNAME"),
+            KEY=os.getenv("KAGGLE__KEY"),
         )
         # set Log level using string value
 

@@ -5,6 +5,9 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "click>=8.1.8",
+    "kagglehub>=0.3.10",
+    "pandas>=2.2.3",
     "python-dotenv>=1.0.1",
     "requests>=2.32.3",
     "torch>=2.6.0",
@@ -14,17 +17,14 @@ dependencies = [
 ]
 
 [project.scripts]
-main = "src.main:main"
-docs = "src.docs.__main__:main"
-train = "src.trainers.mnist.mnist:run_train"
-test = "src.trainers.mnist.mnist:run_test"
+docs = "modeling.docs.__main__:main"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src"]
+packages = ["modeling"]
 
 [tool.hatch.version]
 path = "pkg/__init__.py"

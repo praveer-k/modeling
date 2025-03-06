@@ -375,35 +375,309 @@ Filters are the small matrices that are used to extract features from the input 
 There are various types of filters that are used in convolutional neural networks such as edge detection filters, texture filters, and shape filters. Filters are used to extract features from the input data and are used to learn the features that are important for the task at hand.
 Based on the documentation, there are several types of filters (kernels) used in convolution operations. 
 
-Here's a structured breakdown:
+Here is the list of some of the filters used in convolution operations with their respective kernels
     1. Basic Filters:
         * Edge detection filters
+            * Horizontal Edge Detection:
+                .. math::
+                        \begin{bmatrix}
+                        1 & 1 & 1 \\
+                        0 & 0 & 0 \\
+                        -1 & -1 & -1
+                        \end{bmatrix}
+
+            * Vertical Edge Detection:
+                .. math::
+                        \begin{bmatrix}
+                        1 & 0 & -1 \\
+                        1 & 0 & -1 \\
+                        1 & 0 & -1
+                        \end{bmatrix}
+
+            * Diagonal Edge Detection:
+                .. math::
+                        \begin{bmatrix}
+                        -1 & -1 & 2 \\
+                        -1 & 2 & -1 \\
+                        2 & -1 & -1
+                        \end{bmatrix}
         * Texture filters
+            * Texture Detection:
+                .. math::
+                        \begin{bmatrix}
+                        -1 & -1 & -1 \\
+                        2 & 2 & 2 \\
+                        -1 & -1 & -1
+                        \end{bmatrix}
+                        \quad
+                        \begin{bmatrix}
+                        -1 & 2 & -1 \\
+                        -1 & 2 & -1 \\
+                        -1 & 2 & -1
+                        \end{bmatrix}
+
+            * Pattern Detection:
+                .. math::
+                        \begin{bmatrix}
+                        1 & -1 & 1 \\
+                        -1 & 1 & -1 \\
+                        1 & -1 & 1
+                        \end{bmatrix}
         * Shape filters
+            * Circle Detection:
+                .. math::
+                        \begin{bmatrix}
+                        0 & 1 & 0 \\
+                        1 & -4 & 1 \\
+                        0 & 1 & 0
+                        \end{bmatrix}
+
+            * Square Detection:
+                .. math::
+                        \begin{bmatrix}
+                        1 & 1 & 1 \\
+                        1 & -8 & 1 \\
+                        1 & 1 & 1
+                        \end{bmatrix}
         * Color filters
+            * Red Detection:
+                .. math::
+                        \begin{bmatrix}
+                        1 & 0 & 0 \\
+                        0 & 0 & 0 \\
+                        0 & 0 & 0
+                        \end{bmatrix}
+
+            * Green Detection:
+                .. math::
+                        \begin{bmatrix}
+                        0 & 1 & 0 \\
+                        1 & 1 & 1 \\
+                        0 & 1 & 0
+                        \end{bmatrix}
+
+            * Blue Detection:
+                .. math::
+                        \begin{bmatrix}
+                        0 & 0 & 0 \\
+                        0 & 0 & 0 \\
+                        1 & 0 & 0
+                        \end{bmatrix}
         * Blur filters
+            .. math::
+                \begin{bmatrix}
+                1/9 & 1/9 & 1/9 \\
+                1/9 & 1/9 & 1/9 \\
+                1/9 & 1/9 & 1/9
+                \end{bmatrix}
+            
         * Sharpen filters
+            .. math::
+                \begin{bmatrix}
+                0 & -1 & 0 \\
+                -1 & 5 & -1 \\
+                0 & -1 & 0
+                \end{bmatrix}
+            
         * Emboss filters
+            .. math::
+                \begin{bmatrix}
+                -2 & -1 & 0 \\
+                -1 & 1 & 1 \\
+                0 & 1 & 2
+                \end{bmatrix}
 
     2. Edge Detection Specific:
         * Sobel filters
+            * Horizontal Sobel:
+                .. math::
+                    \begin{bmatrix}
+                    -1 & 0 & 1 \\
+                    -2 & 0 & 2 \\
+                    -1 & 0 & 1
+                    \end{bmatrix}
+            * Vertical Sobel:
+                .. math::
+                    \begin{bmatrix}
+                    -1 & -2 & -1 \\
+                    0 & 0 & 0 \\
+                    1 & 2 & 1
+                    \end{bmatrix}
+
         * Prewitt filters
+            * Horizontal Prewitt:
+                .. math::
+                    \begin{bmatrix}
+                    -1 & 0 & 1 \\
+                    -1 & 0 & 1 \\
+                    -1 & 0 & 1
+                    \end{bmatrix}
+            * Vertical Prewitt:
+                .. math::
+                    \begin{bmatrix}
+                    -1 & -1 & -1 \\
+                    0 & 0 & 0 \\
+                    1 & 1 & 1
+                    \end{bmatrix}
         * Canny filters
+            * Horizontal Canny:
+                .. math::
+                    \begin{bmatrix}
+                    -1 & -1 & -1 \\
+                    2 & 2 & 2 \\
+                    -1 & -1 & -1
+                    \end{bmatrix}
+            * Vertical Canny:
+                .. math::
+                    \begin{bmatrix}
+                    -1 & 2 & -1 \\
+                    -1 & 2 & -1 \\
+                    -1 & 2 & -1
+                    \end{bmatrix}
+
         * Roberts filters
+            * Horizontal Roberts:
+                .. math::
+                    \begin{bmatrix}
+                    1 & 0 \\
+                    0 & -1
+                    \end{bmatrix}
+            * Vertical Roberts: 
+                .. math::
+                    \begin{bmatrix}
+                    0 & 1 \\
+                    -1 & 0
+                    \end{bmatrix}
+
         * Kirsch filters
+            * Horizontal Kirsch:
+                .. math::
+                    \begin{bmatrix}
+                    5 & 5 & 5 \\
+                    -3 & 0 & -3 \\
+                    -3 & -3 & -3
+                    \end{bmatrix}
+            * Vertical Kirsch:
+                .. math::
+                    \begin{bmatrix}
+                    5 & -3 & -3 \\
+                    5 & 0 & -3 \\
+                    5 & -3 & -3
+                    \end{bmatrix}
         * Robinson filters
+            * Horizontal Robinson:
+                .. math::
+                    \begin{bmatrix}
+                    1 & 1 & 1 \\
+                    0 & 0 & 0 \\
+                    -1 & -1 & -1
+                    \end{bmatrix}
+            * Vertical Robinson:
+                .. math::
+                    \begin{bmatrix}
+                    1 & 0 & -1 \\
+                    1 & 0 & -1 \\
+                    1 & 0 & -1
+                    \end{bmatrix}
         * Nevatia-Babu filters
+            * Horizontal Nevatia-Babu:
+                .. math::
+                    \begin{bmatrix}
+                    100 & 100 & 100 & 100 & 100 \\
+                    100 & 100 & 100 & 100 & 100 \\
+                    0 & 0 & 0 & 0 & 0 \\
+                    -100 & -100 & -100 & -100 & -100 \\
+                    -100 & -100 & -100 & -100 & -100
+                    \end{bmatrix}
+            * Vertical Nevatia-Babu:
+                .. math::
+                    \begin{bmatrix}
+                    -100 & -100 & 0 & 100 & 100 \\
+                    -100 & -100 & 0 & 100 & 100 \\
+                    -100 & -100 & 0 & 100 & 100 \\
+                    -100 & -100 & 0 & 100 & 100 \\ 
+                    -100 & -100 & 0 & 100 & 100
+                    \end{bmatrix}
         * Gradient filters
+            * Horizontal Gradient:
+                .. math::
+                    \begin{bmatrix}
+                    -1 & 0 & 1 \\
+                    -1 & 0 & 1 \\
+                    -1 & 0 & 1
+                    \end{bmatrix}
+            * Vertical Gradient:
+                .. math::
+                    \begin{bmatrix}
+                    -1 & -1 & -1 \\
+                    0 & 0 & 0 \\
+                    1 & 1 & 1
+                    \end{bmatrix}
 
     3. Gaussian-based:
         * Gaussian filters
+            .. math::
+                \begin{bmatrix}
+                1 & 2 & 1 \\
+                2 & 4 & 2 \\
+                1 & 2 & 1
+                \end{bmatrix}
+        * Gaussian derivative filters
+            * Gaussian Derivative:
+                .. math::
+                    \begin{bmatrix}
+                    -1 & -2 & -1 \\
+                    0 & 0 & 0 \\
+                    1 & 2 & 1
+                    \end{bmatrix}
+            * Gaussian Derivative of Gaussian:
+                .. math::
+                    \begin{bmatrix}
+                    1 & 2 & 1 \\
+                    2 & 4 & 2 \\
+                    1 & 2 & 1
+                    \end{bmatrix}
         * Laplacian filters
-        * Laplacian of Gaussian (LoG) filters
-        * Difference of Gaussian (DoG) filters
+            * Laplacian:
+                .. math::
+                    \begin{bmatrix}
+                    0 & 1 & 0 \\
+                    1 & -4 & 1 \\
+                    0 & 1 & 0
+                    \end{bmatrix}
+            * Laplacian of Gaussian:
+                .. math::
+                    \begin{bmatrix}
+                    0 & 0 & 1 & 0 & 0 \\
+                    0 & 1 & 2 & 1 & 0 \\
+                    1 & 2 & -16 & 2 & 1 \\
+                    0 & 1 & 2 & 1 & 0 \\
+                    0 & 0 & 1 & 0 & 0
+                    \end{bmatrix}
+        * Difference of Gaussian filters
+            * Difference of Gaussian:
+                .. math::
+                    \begin{bmatrix}
+                    1 & 1 & 1 & 1 & 1 \\
+                    1 & 2 & 2 & 2 & 1 \\
+                    1 & 2 & 0 & 2 & 1 \\
+                    1 & 2 & 2 & 2 & 1 \\
+                    1 & 1 & 1 & 1 & 1
+                    \end{bmatrix}
         * Marr-Hildreth filters
-
+            * Marr-Hildreth:
+                .. math::
+                    \begin{bmatrix}
+                    0 & 0 & -1 & 0 & 0 \\
+                    0 & -1 & -2 & -1 & 0 \\
+                    -1 & -2 & 16 & -2 & -1 \\
+                    0 & -1 & -2 & -1 & 0 \\
+                    0 & 0 & -1 & 0 & 0
+                    \end{bmatrix}
+        
     4. Advanced Filters:
         * Gabor filters
+            
         * Frei-Chen filters
         * Homomorphic filters
         * Wiener filters
