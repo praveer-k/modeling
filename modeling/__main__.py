@@ -1,7 +1,7 @@
 import click
 from modeling.config import logger
-from modeling.recommendation import cli as recommendation_cli
-from modeling.convolution import cli as convolution_cli
+from modeling.recommendation.__main__ import cli as recommendation_cli
+from modeling.convolution.__main__ import cli as convolution_cli
 from modeling.docs.__main__ import cli as docs_cli
 
 def add_options(options):
