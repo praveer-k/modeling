@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "click>=8.1.8",
+    "kaggle>=1.6.17",
     "kagglehub>=0.3.10",
     "pandas>=2.2.3",
     "python-dotenv>=1.0.1",
@@ -15,9 +16,6 @@ dependencies = [
     "torchvision>=0.21.0",
     "watchdog>=6.0.0",
 ]
-
-[project.scripts]
-docs = "modeling.docs.__main__:main"
 
 [build-system]
 requires = ["hatchling"]

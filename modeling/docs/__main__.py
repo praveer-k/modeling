@@ -1,12 +1,12 @@
 import os
 import time
+import click
 import requests
-import argparse
 import subprocess
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-from src.config import settings, logger
-from src.config.settings import LogLevel
+from modeling.config import settings, logger
+from modeling.config.settings import LogLevel
 
 class SphinxFileChangeHandler(FileSystemEventHandler):
     def __init__(self, src_dir, build_dir):
@@ -110,36 +110,59 @@ class DocumentationBuilder(SphinxFileChangeHandler, HttpServer):
                 logger.error(f"Failed to download file: {response.status_code}")
 
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="Select the entry points for docs")
-    parser.add_argument("--watch", action="store_true", help="Watch for changes in document source directory")
-    parser.add_argument("--build", action="store_true", help="Build Sphinx docs")
-    parser.add_argument("--serve", action="store_true", help="Start the document server")
-    parser.add_argument("--debug", action="store_true", help="Change log level to debug", default=False)
-    args = parser.parse_args()
-    # if debug level is set then change it to false but enable DEBUG mode in logger.
-    if args.debug:
-        args.debug = False
+@click.group("docs")
+def cli():
+    """Documentation builder CLI tool"""
+    pass
+
+@cli.command()
+@click.option('--debug/--no-debug', '-d/-D', default=False, help='Enable debug mode')
+def build(debug):
+    """Build Sphinx documentation"""
+    if debug:
         settings.LOG_LEVEL = LogLevel.DEBUG
-    # If no arguments are provided, print help
-    if not any(vars(args).values()):
-        parser.print_help()
-    return args
-
-
-def main():
-    args = parse_args()
+    
     SCR_DIR = os.path.abspath(settings.DOCS.SOURCE_DIR)
     BLD_DIR = os.path.abspath(settings.DOCS.BUILD_DIR)
     CACHE_DIR = os.path.abspath(settings.DOCS.CACHE_DIR)
-    logger.warning(f"Source dir: {SCR_DIR}")
-    logger.warning(f"Build dir: {BLD_DIR}")
-    logger.warning(f"Cache dir: {CACHE_DIR}")
+    
+    logger.debug(f"Source dir: {SCR_DIR}")
+    logger.debug(f"Build dir: {BLD_DIR}")
+    logger.debug(f"Cache dir: {CACHE_DIR}")
+    
     doc = DocumentationBuilder(src_dir=SCR_DIR, build_dir=BLD_DIR, cache_dir=CACHE_DIR)
     doc.download_dependencies()
-    if args.build:
-        doc.build()
-    if args.watch:
-        doc.build().watch()
-    if args.serve:
-        doc.build().serve()
+    doc.build()
+
+@cli.command()
+@click.option('--debug/--no-debug', '-d/-D', default=False, help='Enable debug mode')
+def watch(debug):
+    """Watch for changes and rebuild documentation"""
+    if debug:
+        settings.LOG_LEVEL = LogLevel.DEBUG
+    
+    SCR_DIR = os.path.abspath(settings.DOCS.SOURCE_DIR)
+    BLD_DIR = os.path.abspath(settings.DOCS.BUILD_DIR)
+    CACHE_DIR = os.path.abspath(settings.DOCS.CACHE_DIR)
+    
+    doc = DocumentationBuilder(src_dir=SCR_DIR, build_dir=BLD_DIR, cache_dir=CACHE_DIR)
+    doc.download_dependencies()
+    doc.build().watch()
+
+@cli.command()
+@click.option('--debug/--no-debug', '-d/-D', default=False, help='Enable debug mode')
+def serve(debug):
+    """Start the documentation server"""
+    if debug:
+        settings.LOG_LEVEL = LogLevel.DEBUG
+    
+    SCR_DIR = os.path.abspath(settings.DOCS.SOURCE_DIR)
+    BLD_DIR = os.path.abspath(settings.DOCS.BUILD_DIR)
+    CACHE_DIR = os.path.abspath(settings.DOCS.CACHE_DIR)
+    
+    doc = DocumentationBuilder(src_dir=SCR_DIR, build_dir=BLD_DIR, cache_dir=CACHE_DIR)
+    doc.download_dependencies()
+    doc.build().serve()
+
+if __name__ == '__main__':
+    cli()

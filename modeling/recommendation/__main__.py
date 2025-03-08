@@ -1,5 +1,6 @@
 import os
 import kagglehub
+from kaggle.api.kaggle_api_extended import KaggleApi
 import pandas as pd
 
 from pathlib import Path
@@ -12,18 +13,20 @@ def cli():
     pass
 
 @cli.command()
-@option('--data-dir', 
-        default='./.local/large_files/movielens-20m-dataset',
-        help='Directory to store the dataset')
-@option('--force/--no-force', 
-        default=False,
-        help='Force download even if files exist')
+@option('--data-dir', default='./.local/large_files/movielens-20m-dataset', help='Directory to store the dataset')
+@option('--force/--no-force', default=False, help='Force download even if files exist')
 def download(data_dir: str, force: bool):
     """Download the MovieLens 20M dataset"""
     try:
-        kagglehub.init(oauth=True)
-        ratings_file = kagglehub.load('grouplens/movielens-20m-dataset/rating.csv')
-        df = pd.read_csv(ratings_file)
+        api = KaggleApi()
+        api.authenticate()
+        ratings_file_path = Path(data_dir) / 'rating.csv'
+        print(f"Downloading dataset to {ratings_file_path.as_posix()}")
+        if not force and ratings_file_path.exists():
+            print(f"Dataset already downloaded to {ratings_file_path.as_posix()}")
+            return None
+        kagglehub.load_dataset('grouplens/movielens-20m-dataset/rating.csv')
+        df = pd.read_csv(ratings_file_path)
         os.makedirs(data_dir, exist_ok=True)
         df.to_parquet(os.path.join(data_dir, 'rating.parquet'))
         print(f"Dataset downloaded to {data_dir}")

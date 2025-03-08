@@ -8,7 +8,7 @@
 
 import os
 from recommonmark.parser import CommonMarkParser
-from src.config import settings
+from modeling.config import settings
 
 project = 'AL/ML documentation'
 copyright = '2025, Praveer Kumar'

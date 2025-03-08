@@ -1,9 +1,9 @@
-import logging
 import os
+import logging
 from enum import Enum
 from dotenv import load_dotenv
 from dataclasses import dataclass
-from src.config.formatter import ColorFormatter
+from modeling.config.formatter import ColorFormatter
 
 class LogLevel(str, Enum):
     DEBUG = "DEBUG"
@@ -59,8 +59,6 @@ class Settings:
             KEY=os.getenv("KAGGLE__KEY"),
         )
         # set Log level using string value
-
-
         self.LOG_LEVEL = LogLevel(os.getenv("LOG_LEVEL", "INFO").upper())
 
     @property

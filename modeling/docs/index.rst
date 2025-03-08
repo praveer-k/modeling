@@ -10,4 +10,5 @@ Quick overview:
    pages/linear_algebra
    pages/probability
    pages/convolution
+   pages/recommendation/index
 
