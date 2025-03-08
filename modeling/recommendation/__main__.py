@@ -1,38 +1,65 @@
-import os
-import kagglehub
-from kaggle.api.kaggle_api_extended import KaggleApi
+import click
+import kaggle
+import zipfile
 import pandas as pd
-
 from pathlib import Path
-from click import command, option, group
-from builtins import range, input
+from modeling.config import logger
+from kaggle.api.kaggle_api_extended import KaggleApi
 
-@group("recommendation")
+@click.group("recommendation")
 def cli():
     """MovieLens Recommendation System CLI"""
     pass
 
 @cli.command()
-@option('--data-dir', default='./.local/large_files/movielens-20m-dataset', help='Directory to store the dataset')
-@option('--force/--no-force', default=False, help='Force download even if files exist')
+@click.option('--data-dir', default='./.local/large_files/movielens-20m-dataset', help='Directory to store the dataset')
+@click.option('--force/--no-force', default=False, help='Force download even if files exist')
 def download(data_dir: str, force: bool):
     """Download the MovieLens 20M dataset"""
     try:
+        # Create directory structure
+        data_dir: Path = Path(data_dir)
+        data_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Setup file paths
+        ratings_csv = data_dir / 'rating.csv'
+        ratings_parquet = data_dir / 'rating.parquet'
+        zip_file = data_dir / 'rating.csv.zip'
+
+        # Check if files exist
+        if not force and ratings_parquet.exists():
+            logger.info(f"Dataset already exists at {ratings_parquet}")
+            return
+        
+        # Download dataset
+        logger.info(f"Downloading dataset to {ratings_csv}")
         api = KaggleApi()
         api.authenticate()
-        ratings_file_path = Path(data_dir) / 'rating.csv'
-        print(f"Downloading dataset to {ratings_file_path.as_posix()}")
-        if not force and ratings_file_path.exists():
-            print(f"Dataset already downloaded to {ratings_file_path.as_posix()}")
-            return None
-        kagglehub.load_dataset('grouplens/movielens-20m-dataset/rating.csv')
-        df = pd.read_csv(ratings_file_path)
-        os.makedirs(data_dir, exist_ok=True)
-        df.to_parquet(os.path.join(data_dir, 'rating.parquet'))
-        print(f"Dataset downloaded to {data_dir}")
+        kaggle.api.dataset_download_file(
+            dataset='grouplens/movielens-20m-dataset',
+            file_name='rating.csv',
+            path=data_dir.as_posix(),
+        ) 
+        # Extract zip file
+        logger.info(f"Extracting {zip_file}")
+        with zipfile.ZipFile(zip_file, 'r') as zip_ref:
+            zip_ref.extractall(data_dir)
+        
+        # Convert to parquet
+        if ratings_csv.exists():
+            logger.info("Converting to parquet format...")
+            df = pd.read_csv(ratings_csv)
+            df.to_parquet(ratings_parquet)
+            # Cleanup temporary files
+            ratings_csv.unlink()  # Remove CSV
+            zip_file.unlink()     # Remove ZIP
+            logger.info(f"Dataset saved to {ratings_parquet}")
+        else:
+            raise FileNotFoundError(f"Failed to extract dataset to {ratings_csv}")
+            
     except Exception as e:
-        print(f"Error downloading dataset: {e}")
-        return None
+        logger.error(f"Error downloading dataset: {str(e)}")
+        raise
 
 # @cli.command()
 # @option('--data-dir', 
