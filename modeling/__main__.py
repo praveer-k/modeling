@@ -1,8 +1,10 @@
 import click
+
 from modeling.config import logger
-from modeling.recommendation.__main__ import cli as recommendation_cli
-from modeling.convolution.__main__ import cli as convolution_cli
+from modeling.llm.__main__ import cli as llm_cli
 from modeling.docs.__main__ import cli as docs_cli
+from modeling.convolution.__main__ import cli as convolution_cli
+from modeling.recommendation.__main__ import cli as recommendation_cli
 
 def add_options(options):
     def _add_options(func):
@@ -35,6 +37,7 @@ def cli(ctx: click.Context, debug: bool, config: str):
 
 cli.add_command(recommendation_cli, "recommendation")
 cli.add_command(convolution_cli, "convolution")
+cli.add_command(llm_cli, "llm")
 cli.add_command(docs_cli, "docs")
 
 @cli.command()

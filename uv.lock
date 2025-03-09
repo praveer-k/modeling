@@ -356,6 +356,15 @@ wheels = [
 ]
 
 [[package]]
+name = "mlx"
+version = "0.23.2"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/78/f4/a2c1b6213b99adf03c417ad0ec9657309289999d3a5ea5a35b72b5b28874/mlx-0.23.2-cp313-cp313-macosx_13_0_arm64.whl", hash = "sha256:b9ad4c2c5d9cfd177b1894addd1ff56b8fa95b40b1ecefb767a8aab76dc7e518", size = 27808955 },
+    { url = "https://files.pythonhosted.org/packages/0f/39/ea36fc5b66fe58ace2325f988791ce39bf8265a2d072e23336fc154778a3/mlx-0.23.2-cp313-cp313-macosx_14_0_arm64.whl", hash = "sha256:a96baaa7b8d4d21960ab683ce91d509654cc9ae7384d7bb9aeecabd0da7fb9ef", size = 27553386 },
+]
+
+[[package]]
 name = "modeling"
 version = "0.1.0"
 source = { editable = "." }
@@ -363,6 +372,7 @@ dependencies = [
     { name = "click" },
     { name = "kaggle" },
     { name = "matplotlib" },
+    { name = "mlx" },
     { name = "pandas" },
     { name = "pyarrow" },
     { name = "python-dotenv" },
@@ -390,6 +400,7 @@ requires-dist = [
     { name = "click", specifier = ">=8.1.8" },
     { name = "kaggle", specifier = ">=1.6.17" },
     { name = "matplotlib", specifier = ">=3.10.1" },
+    { name = "mlx", specifier = ">=0.23.2" },
     { name = "pandas", specifier = ">=2.2.3" },
     { name = "pyarrow", specifier = ">=19.0.1" },
     { name = "python-dotenv", specifier = ">=1.0.1" },
