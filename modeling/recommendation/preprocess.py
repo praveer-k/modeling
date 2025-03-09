@@ -1,4 +1,7 @@
+from pathlib import Path
 import pandas as pd
+from tqdm import tqdm
+from modeling.config import logger
 from sklearn.utils import shuffle
 from scipy.sparse import lil_matrix, csr_matrix, save_npz, load_npz
 
@@ -32,6 +35,7 @@ def basic_transform(df: pd.DataFrame) -> pd.DataFrame:
 def split_train_test(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Split the MovieLens dataset into train and test sets"""
     # load in the data
+    logger.info("Splitting data into train and test set")
     N = df['userId'].max() + 1 # number of users
     M = df['movie_idx'].max() + 1 # number of movies
     # split into train and test
@@ -49,38 +53,36 @@ def convert_data_to_dict(df: pd.DataFrame, subset: str) -> tuple[dict, dict, dic
     movie2user = {}
     # a dictionary to look up ratings
     usermovie2rating = {}
-    print(f"Calling: update_dictionaries for subset {subset}")
-    count = 0
+    logger.info(f"Calling: update_dictionaries for subset {subset}")
     def update_dictionaries(row):
-        nonlocal count
-        count += 1
-        if count % 100000 == 0:
-            print("processed: %.3f" % (float(count)/len(df)))
         i = int(row.userId)
         j = int(row.movie_idx)
-        user2movie[i] += user2movie.get(i, [j])
-        movie2user[j] += movie2user.get(j, [i])
+        # Initialize lists if they don't exist
+        if i not in user2movie:
+            user2movie[i] = []
+        if j not in movie2user:
+            movie2user[j] = []
+        # Append values to lists
+        user2movie[i].append(j)
+        movie2user[j].append(i)
         usermovie2rating[(i,j)] = row.rating
-    df.apply(update_dictionaries, axis=1)
+    tqdm.pandas(desc=f"Processing {subset} data")
+    df.progress_apply(update_dictionaries, axis=1)
     return user2movie, movie2user, usermovie2rating
 
-def save_as_sparse_data(df: pd.DataFrame, subset: str):
+def save_as_sparse_data(df: pd.DataFrame, data_dir: Path, subset: str):
     """Convert the MovieLens dataset to sparse matrix format"""
     N = df['userId'].max() + 1 # number of users
     M = df['movie_idx'].max() + 1 # number of movies
     A = lil_matrix((N, M))
-    print(f"Calling: update_{subset}")
-    count = 0
+    logger.info(f"Calling: update_data for subset {subset}")
     def update_data(row):
-        nonlocal count
-        count += 1
-        if count % 100000 == 0:
-            print(f"processed: {float(count)/len(df)}.3f")
         i = int(row.userId)
         j = int(row.movie_idx)
         A[i,j] = row.rating
-    df.apply(update_data, axis=1)
+    tqdm.pandas(desc=f"Processing sparse data for {subset} subset")
+    df.progress_apply(update_data, axis=1)
     # mask, to tell us which entries exist and which do not
     A = A.tocsr()
     mask = (A > 0)
-    save_npz(f"A{subset}.npz", A)
+    save_npz(data_dir / f"A{subset}.npz", A)

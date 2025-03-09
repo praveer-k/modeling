@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 from datetime import datetime
 
+from modeling.config import logger
 from modeling.recommendation.helper import load_data
 
 
@@ -35,8 +36,8 @@ def update_W_and_b(W: np.ndarray, U: np.ndarray, b: np.ndarray, c: np.ndarray, m
     W[i] = np.linalg.solve(matrix, vector)
     b[i] = bi / (len(user2movie[i]) + reg)
     if i % (N//10) == 0:
-      print("i:", i, "N:", N)
-  print("updated W and b:", datetime.now() - t0)
+      logger.info(f"i:{i} N:{N}")
+  logger.info(f"updated W and b: {datetime.now() - t0}")
 
 def update_U_and_c(W: np.ndarray, U: np.ndarray, b: np.ndarray, c: np.ndarray, mu: np.ndarray, M: int, K: int, reg: int, movie2user: dict, usermovie2rating: dict):
   # update U and c
@@ -57,11 +58,11 @@ def update_U_and_c(W: np.ndarray, U: np.ndarray, b: np.ndarray, c: np.ndarray, m
       U[j] = np.linalg.solve(matrix, vector)
       c[j] = cj / (len(movie2user[j]) + reg)
       if j % (M//10) == 0:
-        print("j:", j, "M:", M)
+        logger.info(f"j:{j} M:{M}")
     except KeyError:
       # possible not to have any ratings for a movie
       pass
-  print("updated U and c:", datetime.now() - t0)
+  logger.info(f"updated U and c: {datetime.now() - t0}")
 
 def get_dimensions(user2movie: dict, movie2user: dict, usermovie2rating_test: dict) -> tuple[int, int]:
   N = np.max(list(user2movie.keys())) + 1
@@ -69,7 +70,7 @@ def get_dimensions(user2movie: dict, movie2user: dict, usermovie2rating_test: di
   m1 = np.max(list(movie2user.keys()))
   m2 = np.max([m for (u, m), r in usermovie2rating_test.items()])
   M = max(m1, m2) + 1
-  print("N:", N, "M:", M)
+  logger.info(f"N:{N} M:{M}")
   return N, M
 
 def train_for_recommendation(data_dir: Path) -> tuple[list, list]:
@@ -88,23 +89,23 @@ def train_for_recommendation(data_dir: Path) -> tuple[list, list]:
   train_losses = []
   test_losses = []
   for epoch in range(epochs):
-    print("epoch:", epoch)
+    logger.info(f"epoch:{epoch}")
     epoch_start = datetime.now()
     # perform updates
     # prediction[i,j] = W[i].dot(U[j]) + b[i] + c.T[j] + mu
     update_W_and_b(W, U, b, c, mu, N, K, reg, user2movie, usermovie2rating)
     update_U_and_c(W, U, b, c, mu, M, K, reg, movie2user, usermovie2rating)
-    print("epoch duration:", datetime.now() - epoch_start)
+    logger.info(f"epoch duration:{datetime.now() - epoch_start}")
     # store train loss
     t0 = datetime.now()
-    train_losses.append(get_loss(usermovie2rating))
+    train_losses.append(get_loss(usermovie2rating, W, U, b, c, mu))
     # store test loss
-    test_losses.append(get_loss(usermovie2rating_test))
-    print("calculate cost:", datetime.now() - t0)
-    print("train loss:", train_losses[-1])
-    print("test loss:", test_losses[-1])
-  print("train losses:", train_losses)
-  print("test losses:", test_losses)
+    test_losses.append(get_loss(usermovie2rating_test, W, U, b, c, mu))
+    logger.info(f"calculate cost:{datetime.now() - t0}")
+    logger.info(f"train loss:{train_losses[-1]}")
+    logger.info(f"test loss:{test_losses[-1]}")
+  logger.info(f"train losses:{train_losses}")
+  logger.info(f"test losses:{test_losses}")
   return train_losses, test_losses
 
 def plot_train_test_loss(train_losses: list, test_losses: list):

@@ -42,7 +42,7 @@ def download(data_dir: str, force: bool):
         kaggle.api.dataset_download_file(
             dataset='grouplens/movielens-20m-dataset',
             file_name='rating.csv',
-            path=data_dir.as_posix(),
+            path=data_dir,
         ) 
         # Extract zip file
         logger.info(f"Extracting {zip_file}")
@@ -67,7 +67,7 @@ def download(data_dir: str, force: bool):
 
 @cli.command()
 @click.option('--data-dir', default='.local/large_files/movielens-20m-dataset', help='Directory containing the dataset')
-@click.option('--output-file', default='edited_rating.csv', help='Output file name for preprocessed data')
+@click.option('--output-file', default='edited_rating.parquet', help='Output file name for preprocessed data')
 def preprocess(data_dir: str, output_file: str):
     """Preprocess the MovieLens dataset"""
     data_dir: Path = Path(data_dir)
@@ -76,24 +76,27 @@ def preprocess(data_dir: str, output_file: str):
     if not data_dir.exists():
         logger.error(f"Directory not found: {data_dir}")
         return
-    df = pd.read_parquet(ratings_parquet.as_posix())
+    df = pd.read_parquet(ratings_parquet)
     df = basic_transform(df)
-    df.to_parquet(output_file.as_posix(), index=False)
+    logger.info(f"Saving basic transformed data as {output_file}")
+    df.to_parquet(output_file, index=False)
+    # spliting data into train and test datasets
     df_train, df_test = split_train_test(df)
-    user2movie, movie2user, usermovie2rating = convert_data_to_dict(df_train)
-    _, _, usermovie2rating_test = convert_data_to_dict(df_test)
-    # note: these are not really JSONs
-    with open('user2movie.json', 'wb') as f:
+    user2movie, movie2user, usermovie2rating = convert_data_to_dict(df_train, subset="train")
+    _, _, usermovie2rating_test = convert_data_to_dict(df_test, subset="test")
+    # Saving data as pickle files
+    logger.info("Saving dictionary files as pickles")
+    with open(data_dir / 'user2movie.pickle', 'wb') as f:
         pickle.dump(user2movie, f)
-    with open('movie2user.json', 'wb') as f:
+    with open(data_dir / 'movie2user.pickle', 'wb') as f:
         pickle.dump(movie2user, f)
-    with open('usermovie2rating.json', 'wb') as f:
+    with open(data_dir / 'usermovie2rating.pickle', 'wb') as f:
         pickle.dump(usermovie2rating, f)
-    with open('usermovie2rating_test.json', 'wb') as f:
+    with open(data_dir / 'usermovie2rating_test.pickle', 'wb') as f:
         pickle.dump(usermovie2rating_test, f)
     # save as sparse data
-    save_as_sparse_data(df_train)
-    save_as_sparse_data(df_test)
+    save_as_sparse_data(df_train, data_dir=data_dir, subset="train")
+    save_as_sparse_data(df_test, data_dir=data_dir, subset="test")
 
 @cli.command()
 @click.option('--data-dir', default='.local/large_files/movielens-20m-dataset', help='Directory containing the dataset')

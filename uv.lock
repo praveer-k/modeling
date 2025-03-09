@@ -371,6 +371,7 @@ dependencies = [
     { name = "torch" },
     { name = "torchaudio" },
     { name = "torchvision" },
+    { name = "tqdm" },
     { name = "watchdog" },
 ]
 
@@ -397,6 +398,7 @@ requires-dist = [
     { name = "torch", specifier = ">=2.6.0" },
     { name = "torchaudio", specifier = ">=2.6.0" },
     { name = "torchvision", specifier = ">=0.21.0" },
+    { name = "tqdm", specifier = ">=4.67.1" },
     { name = "watchdog", specifier = ">=6.0.0" },
 ]
 
