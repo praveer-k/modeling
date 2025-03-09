@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {   
+            "name": "🚩 recommendation",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "./modeling/__main__.py",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "recommendation",
+                "train"
+            ],
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}",
+            },
+
+        }
+    ]
+}
