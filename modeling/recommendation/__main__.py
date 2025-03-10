@@ -7,6 +7,7 @@ from pathlib import Path
 from modeling.config import logger
 from kaggle.api.kaggle_api_extended import KaggleApi
 
+from modeling.recommendation.helper import save_user_movie_ratings
 from modeling.recommendation.matrix_factorization import plot_train_test_loss, train_for_recommendation
 from modeling.recommendation.preprocess import basic_transform, convert_data_to_dict, save_as_sparse_data, split_train_test
 
@@ -82,18 +83,11 @@ def preprocess(data_dir: str, output_file: str):
     df.to_parquet(output_file, index=False)
     # spliting data into train and test datasets
     df_train, df_test = split_train_test(df)
+    # convert the MovieLens dataset to DICT format
     user2movie, movie2user, usermovie2rating = convert_data_to_dict(df_train, subset="train")
     _, _, usermovie2rating_test = convert_data_to_dict(df_test, subset="test")
     # Saving data as pickle files
-    logger.info("Saving dictionary files as pickles")
-    with open(data_dir / 'user2movie.pickle', 'wb') as f:
-        pickle.dump(user2movie, f)
-    with open(data_dir / 'movie2user.pickle', 'wb') as f:
-        pickle.dump(movie2user, f)
-    with open(data_dir / 'usermovie2rating.pickle', 'wb') as f:
-        pickle.dump(usermovie2rating, f)
-    with open(data_dir / 'usermovie2rating_test.pickle', 'wb') as f:
-        pickle.dump(usermovie2rating_test, f)
+    save_user_movie_ratings(data_dir, user2movie, movie2user, usermovie2rating, usermovie2rating_test)
     # save as sparse data
     save_as_sparse_data(df_train, data_dir=data_dir, subset="train")
     save_as_sparse_data(df_test, data_dir=data_dir, subset="test")
