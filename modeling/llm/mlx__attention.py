@@ -2,6 +2,7 @@ import math
 import mlx.core as mx
 import mlx.nn as nn
 
+
 class LlamaAttention(nn.Module):
     def __init__(self, dims: int, num_heads: int):
         super().__init__()

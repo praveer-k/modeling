@@ -3,8 +3,11 @@ import mlx.nn as nn
 
 from modeling.llm.mlx__encoder import LlamaEncoderLayer
 
+
 class Llama(nn.Module):
-    def __init__(self, num_layers: int, vocab_size: int, dims: int, mlp_dims: int, num_heads: int):
+    def __init__(
+        self, num_layers: int, vocab_size: int, dims: int, mlp_dims: int, num_heads: int
+    ):
         super().__init__()
 
         self.embedding = nn.Embedding(vocab_size, dims)
@@ -23,7 +26,7 @@ class Llama(nn.Module):
             x, _ = l(x, mask)
         x = self.norm(x)
         return self.out_proj(x)
-    
+
     def generate(self, x, temp=1.0):
         cache = []
 
@@ -37,11 +40,11 @@ class Llama(nn.Module):
         for l in self.layers:
             x, c = l(x, mask=mask)
             cache.append(c)  # <--- we store the per layer cache in a
-                             #      simple python list
+            #      simple python list
         x = self.norm(x)
         y = self.out_proj(x[:, -1])  # <--- we only care about the last logits
-                                     #      that generate the next token
-        y = mx.random.categorical(y * (1/temp))
+        #      that generate the next token
+        y = mx.random.categorical(y * (1 / temp))
 
         # y now has size [1]
         # Since MLX is lazily evaluated nothing is computed yet.
@@ -66,6 +69,6 @@ class Llama(nn.Module):
                 x, cache[i] = self.layers[i](x, mask=None, cache=cache[i])
             x = self.norm(x)
             y = self.out_proj(x[:, -1])
-            y = mx.random.categorical(y * (1/temp))
+            y = mx.random.categorical(y * (1 / temp))
 
             yield y

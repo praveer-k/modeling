@@ -1,8 +1,9 @@
 import torch
 from torch.nn import Conv1d
 
+
 def conv_1d_example():
-    device = torch.device('mps') # cpu or cuda
+    device = torch.device("mps")  # cpu or cuda
     x = torch.arange(1, 7, 1, dtype=torch.float32).reshape(1, 1, -1).to(device)
     print(f"Input shape: {x.shape}")
     print(f"Input: {x.squeeze()}")
@@ -12,12 +13,7 @@ def conv_1d_example():
 
     # Create 1D convolution layer
     conv = Conv1d(
-        in_channels=1,
-        out_channels=1,
-        kernel_size=3,
-        stride=1,
-        padding=0,
-        bias=False
+        in_channels=1, out_channels=1, kernel_size=3, stride=1, padding=0, bias=False
     ).to(device)
 
     # Set the kernel weights to [1, 2, 0.5]
@@ -27,7 +23,7 @@ def conv_1d_example():
     z = conv(x)
     print(f"Output shape: {z.shape}")
     print(f"Actual output: {z.squeeze()}")
-    
+
     # Verify results match
     print(f"Outputs match: {torch.allclose(y, z.squeeze(), atol=1e-6)}")
 

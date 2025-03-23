@@ -7,25 +7,30 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 import os
+import sys
+from pathlib import Path
 from recommonmark.parser import CommonMarkParser
 from modeling.config import settings
 
-project = 'AL/ML documentation'
-copyright = '2025, Praveer Kumar'
-author = 'Praveer Kumar'
-release = '0.1.0'
+sys.path.append(str(Path("_ext").resolve()))
+
+project = "AI/ML documentation"
+copyright = "2025, Praveer Kumar"
+author = "Praveer Kumar"
+release = "0.1.0"
 source_parsers = {
-    '.md': CommonMarkParser,
+    ".md": CommonMarkParser,
 }
 
-source_suffix = ['.rst', '.md']
+source_suffix = [".rst", ".md"]
 
 extensions = [
-  "sphinx.ext.todo",
-  "sphinx.ext.mathjax",
-  "sphinx.ext.autodoc",
-  "sphinx.ext.autosectionlabel",
-  "sphinxcontrib.plantuml",
+    "formula",
+    "sphinx.ext.todo",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosectionlabel",
+    "sphinxcontrib.plantuml",
 ]
 # PlantUML settings
 jar_file = os.path.basename(settings.DOCS.PLANTUML_JAR)
@@ -34,7 +39,7 @@ plantuml = f"java -jar {os.path.abspath(local_jar_file)}"
 plantuml_output_format = "png"
 plantuml_output_dir = "./_static/diagrams"
 
-templates_path = ['_templates']
+templates_path = ["_templates"]
 exclude_patterns = []
 sources = [settings.DOCS.SOURCE_DIR]
 build = [settings.DOCS.BUILD_DIR]
@@ -55,8 +60,8 @@ html_css_files = [
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/fontawesome.min.css",
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/solid.min.css",
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/brands.min.css",
-    'custom.css',
+    "custom.css",
 ]
 html_static_path = ["_static"]
-htmlhelp_basename = f'{settings.DOCS.DESCRIPTION}'
+htmlhelp_basename = f"{settings.DOCS.DESCRIPTION}"
 html_show_sphinx = False

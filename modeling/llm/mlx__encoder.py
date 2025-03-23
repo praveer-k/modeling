@@ -3,6 +3,7 @@ import mlx.nn as nn
 
 from modeling.llm.mlx__attention import LlamaAttention
 
+
 class LlamaEncoderLayer(nn.Module):
     def __init__(self, dims: int, mlp_dims: int, num_heads: int):
         super().__init__()

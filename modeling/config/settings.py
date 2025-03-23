@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from dataclasses import dataclass
 from modeling.config.formatter import ColorFormatter
 
+
 class LogLevel(str, Enum):
     DEBUG = "DEBUG"
     INFO = "INFO"
@@ -12,20 +13,21 @@ class LogLevel(str, Enum):
     ERROR = "ERROR"
     CRITICAL = "CRITICAL"
 
+
 class Logger(logging.Logger):
     def __init__(self, level=logging.NOTSET):
         super().__init__("", level)
         self._setup_handlers()
 
     def _setup_handlers(self):
-        fmt = '%(asctime)s | %(levelname)8s| %(message)s'
+        fmt = "%(asctime)s | %(levelname)8s| %(message)s"
         color_formatter = ColorFormatter(fmt)
         stdout_handler = logging.StreamHandler()
         stdout_handler.setLevel(logging.DEBUG)
         stdout_handler.setFormatter(color_formatter)
         self.addHandler(stdout_handler)
-            
-            
+
+
 @dataclass
 class DocSettings:
     TITLE: str
@@ -36,10 +38,12 @@ class DocSettings:
     CACHE_DIR: str
     PLANTUML_JAR: str
 
+
 @dataclass
 class KaggleSettings:
     USERNAME: str
     KEY: str
+
 
 @dataclass
 class Settings:

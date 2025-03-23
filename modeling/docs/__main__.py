@@ -8,6 +8,7 @@ from watchdog.events import FileSystemEventHandler
 from modeling.config import settings, logger
 from modeling.config.settings import LogLevel
 
+
 class SphinxFileChangeHandler(FileSystemEventHandler):
     def __init__(self, src_dir, build_dir):
         self.src_dir = src_dir
@@ -20,7 +21,9 @@ class SphinxFileChangeHandler(FileSystemEventHandler):
         logger.info("Sphinx documentation rebuilt.")
 
     def on_modified(self, event):
-        if os.path.dirname(event.src_path).startswith(self.src_dir) and event.src_path.endswith((".rst", "conf.py", ".puml")):
+        if os.path.dirname(event.src_path).startswith(
+            self.src_dir
+        ) and event.src_path.endswith((".rst", "conf.py", ".puml")):
             logger.info(event)
             self.build_sphinx()
 
@@ -39,9 +42,7 @@ class HttpServer:
 
     def start_server(self):
         self.server_process = subprocess.Popen(
-            self.http_server_args,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
+            self.http_server_args, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         logger.info("Http server started.")
 
@@ -97,7 +98,9 @@ class DocumentationBuilder(SphinxFileChangeHandler, HttpServer):
     def download_dependencies(self):
         logger.debug("Running download script !!!!")
         logger.warning(self.dependencies_dir)
-        filename = os.path.join(self.dependencies_dir, os.path.basename(self.plantuml_jar_file))
+        filename = os.path.join(
+            self.dependencies_dir, os.path.basename(self.plantuml_jar_file)
+        )
         logger.warning(filename)
         if not os.path.exists(filename):
             os.makedirs(self.dependencies_dir, exist_ok=True)
@@ -115,54 +118,58 @@ def cli():
     """Documentation builder CLI tool"""
     pass
 
+
 @cli.command()
-@click.option('--debug/--no-debug', '-d/-D', default=False, help='Enable debug mode')
+@click.option("--debug/--no-debug", "-d/-D", default=False, help="Enable debug mode")
 def build(debug):
     """Build Sphinx documentation"""
     if debug:
         settings.LOG_LEVEL = LogLevel.DEBUG
-    
+
     SCR_DIR = os.path.abspath(settings.DOCS.SOURCE_DIR)
     BLD_DIR = os.path.abspath(settings.DOCS.BUILD_DIR)
     CACHE_DIR = os.path.abspath(settings.DOCS.CACHE_DIR)
-    
+
     logger.debug(f"Source dir: {SCR_DIR}")
     logger.debug(f"Build dir: {BLD_DIR}")
     logger.debug(f"Cache dir: {CACHE_DIR}")
-    
+
     doc = DocumentationBuilder(src_dir=SCR_DIR, build_dir=BLD_DIR, cache_dir=CACHE_DIR)
     doc.download_dependencies()
     doc.build()
 
+
 @cli.command()
-@click.option('--debug/--no-debug', '-d/-D', default=False, help='Enable debug mode')
+@click.option("--debug/--no-debug", "-d/-D", default=False, help="Enable debug mode")
 def watch(debug):
     """Watch for changes and rebuild documentation"""
     if debug:
         settings.LOG_LEVEL = LogLevel.DEBUG
-    
+
     SCR_DIR = os.path.abspath(settings.DOCS.SOURCE_DIR)
     BLD_DIR = os.path.abspath(settings.DOCS.BUILD_DIR)
     CACHE_DIR = os.path.abspath(settings.DOCS.CACHE_DIR)
-    
+
     doc = DocumentationBuilder(src_dir=SCR_DIR, build_dir=BLD_DIR, cache_dir=CACHE_DIR)
     doc.download_dependencies()
     doc.build().watch()
 
+
 @cli.command()
-@click.option('--debug/--no-debug', '-d/-D', default=False, help='Enable debug mode')
+@click.option("--debug/--no-debug", "-d/-D", default=False, help="Enable debug mode")
 def serve(debug):
     """Start the documentation server"""
     if debug:
         settings.LOG_LEVEL = LogLevel.DEBUG
-    
+
     SCR_DIR = os.path.abspath(settings.DOCS.SOURCE_DIR)
     BLD_DIR = os.path.abspath(settings.DOCS.BUILD_DIR)
     CACHE_DIR = os.path.abspath(settings.DOCS.CACHE_DIR)
-    
+
     doc = DocumentationBuilder(src_dir=SCR_DIR, build_dir=BLD_DIR, cache_dir=CACHE_DIR)
     doc.download_dependencies()
     doc.build().serve()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     cli()
