@@ -7,7 +7,33 @@ from datetime import datetime
 from modeling.config import logger
 from modeling.recommendation.helper import load_data
 
+"""
+The function calculates:
+$$
 
+\text{Loss} = \frac{1}{N} \sum_{(i, j) \in d} \left( W_i \cdot U_j + b_i + c_j + \mu - r_{ij} \right)^2
+
+$$
+Where:
+    $$d$$ is a dictionary mapping (user, movie) pairs to ratings $$r_{ij}$$
+    $$W$$ and $$U$$ are embedding matrices for users and movies.
+    $$b$$ and $$c$$ are bias terms for users and movies.
+    $$μ$$ is a global bias (scalar).
+    $$N$$ is the total number of ratings in the dataset.
+  
+  Python Implementation:
+    - Iterate over each (user, movie) pair in d, extracting the rating r.
+    - Predicts the rating using:
+
+      $$ p=W[i]⋅U[j]+b[i]+c[j]+μ $$
+    
+    - Computes squared error and accumulates it.
+    - Returns the mean squared error (MSE).
+  
+  Potential Improvements
+    - Could use NumPy vectorization to improve performance instead of looping.
+    - Adding regularization would help avoid overfitting.
+"""
 def get_loss(d: dict, W: np.ndarray, U: np.ndarray, b: np.ndarray, c: np.ndarray, mu: np.ndarray):
   # d: (user_id, movie_id) -> rating
   N = float(len(d))

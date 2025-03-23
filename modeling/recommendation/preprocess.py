@@ -46,7 +46,7 @@ def split_train_test(df: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
     return df_train, df_test
 
 def convert_data_to_dict(df: pd.DataFrame, subset: str) -> tuple[dict, dict, dict]:
-    """Convert the MovieLens dataset to JSON format"""
+    """Convert the MovieLens dataset to DICT format"""
     # a dictionary to tell us which users have rated which movies
     user2movie = {}
     # a dictionary to tell us which movies have been rated by which users

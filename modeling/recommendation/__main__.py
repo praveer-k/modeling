@@ -1,6 +1,5 @@
 import click
 import kaggle
-import pickle
 import zipfile
 import pandas as pd
 from pathlib import Path
