@@ -25,12 +25,12 @@ source_parsers = {
 source_suffix = [".rst", ".md"]
 
 extensions = [
-    "formula",
     "sphinx.ext.todo",
     "sphinx.ext.mathjax",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosectionlabel",
     "sphinxcontrib.plantuml",
+    "math_replace",
 ]
 # PlantUML settings
 jar_file = os.path.basename(settings.DOCS.PLANTUML_JAR)
